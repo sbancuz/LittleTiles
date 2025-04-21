@@ -18,6 +18,7 @@ import com.creativemd.creativecore.common.packet.OpenGuiPacket;
 import com.creativemd.creativecore.common.packet.PacketReciever;
 import com.creativemd.creativecore.common.packet.TEContainerPacket;
 import com.creativemd.creativecore.common.utils.stack.StackInfo;
+import com.creativemd.littletiles.LTTags;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -37,7 +38,7 @@ public class CreativeCore {
     public static CreativeCore instance = new CreativeCore();
 
     public static final String modid = "creativecore";
-    public static final String version = "1.4";
+    public static final String version = LTTags.VERSION;
     public static final Logger logger = LogManager.getLogger(modid);
 
     public static SimpleNetworkWrapper network;
