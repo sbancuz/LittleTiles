@@ -17,7 +17,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import com.creativemd.creativecore.client.block.BlockRenderHelper;
 import com.creativemd.creativecore.client.rendering.RenderHelper2D;
 import com.creativemd.creativecore.client.rendering.RenderHelper3D;
 import com.creativemd.creativecore.common.gui.controls.GuiControl;
@@ -25,6 +24,7 @@ import com.creativemd.creativecore.common.gui.premade.SubGuiControl;
 import com.creativemd.creativecore.common.utils.CubeObject;
 import com.creativemd.creativecore.common.utils.RotationUtils.Axis;
 import com.creativemd.littletiles.client.render.ITilesRenderer;
+import com.creativemd.littletiles.client.render.LittleTilesBlockRenderHelper;
 import com.creativemd.littletiles.common.utils.small.LittleTileBox;
 
 public class GuiTileViewer extends GuiControl {
@@ -245,7 +245,7 @@ public class GuiTileViewer extends GuiControl {
         /*
          * for (int k = 0; k < cubes.size(); k++) { RotationUtils.applyCubeRotation(cubes.get(k), viewDirection); }
          */
-        BlockRenderHelper.renderInventoryCubes(
+        LittleTilesBlockRenderHelper.renderInventoryCubes(
                 RenderHelper3D.renderBlocks,
                 cubes,
                 Block.getBlockFromItem(stack.getItem()),

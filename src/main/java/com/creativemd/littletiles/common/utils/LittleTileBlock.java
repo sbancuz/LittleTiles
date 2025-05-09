@@ -6,7 +6,6 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.Block.SoundType;
 import net.minecraft.block.BlockAir;
-import net.minecraft.block.BlockGrass;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -50,11 +49,6 @@ public class LittleTileBlock extends LittleTile {
         meta = nbt.getInteger("meta");
         if (block == null || block instanceof BlockAir)
             throw new IllegalArgumentException("Invalid block name! name=" + nbt.getString("block"));
-    }
-
-    @Override
-    public ForgeDirection[] getValidRotation() {
-        return null;
     }
 
     @Override
@@ -128,10 +122,7 @@ public class LittleTileBlock extends LittleTile {
 
     @Override
     public int getLightValue(IBlockAccess world, int x, int y, int z) {
-        // int light = block.getLightValue(world, x, y, z);
-        // if(light == 0)
         return block.getLightValue();
-        // return light;
     }
 
     @Override
@@ -145,12 +136,6 @@ public class LittleTileBlock extends LittleTile {
             return block == ((LittleTileBlock) tile).block && meta == ((LittleTileBlock) tile).meta;
         }
         return false;
-    }
-
-    @Override
-    public boolean canBlockBeThreaded() {
-        if (LittleTiles.isAngelicaLoaded) return false;
-        return block.getRenderType() == 0 && !(block instanceof BlockGrass);
     }
 
     @Override

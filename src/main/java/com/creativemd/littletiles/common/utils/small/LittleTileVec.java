@@ -3,7 +3,6 @@ package com.creativemd.littletiles.common.utils.small;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class LittleTileVec {
 
@@ -54,25 +53,6 @@ public class LittleTileVec {
         this.x -= vec.x;
         this.y -= vec.y;
         this.z -= vec.z;
-    }
-
-    public void rotateVec(ForgeDirection direction) {
-        switch (direction) {
-            case UP:
-            case DOWN:
-                int tempY = y;
-                y = x;
-                x = tempY;
-                break;
-            case SOUTH:
-            case NORTH:
-                int tempZ = z;
-                z = x;
-                x = tempZ;
-                break;
-            default:
-                break;
-        }
     }
 
     public double distanceTo(LittleTileVec vec) {

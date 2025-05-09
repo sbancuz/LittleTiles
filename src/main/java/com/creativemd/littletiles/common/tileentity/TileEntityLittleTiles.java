@@ -16,7 +16,6 @@ import net.minecraft.util.Vec3;
 
 import com.creativemd.creativecore.common.utils.CubeObject;
 import com.creativemd.littletiles.LittleTiles;
-import com.creativemd.littletiles.client.render.LittleBlockVertex;
 import com.creativemd.littletiles.common.structure.LittleStructure;
 import com.creativemd.littletiles.common.utils.LittleTile;
 import com.creativemd.littletiles.common.utils.small.LittleTileBox;
@@ -45,21 +44,6 @@ public class TileEntityLittleTiles extends TileEntity {
     }
 
     public ArrayList<LittleTile> customRenderingTiles = new ArrayList<>();
-
-    public boolean needsRenderingUpdate;
-
-    public int lightValue;
-
-    public ArrayList<LittleBlockVertex> lastRendered;
-
-    public boolean isRendering;
-
-    public boolean needFullRenderUpdate;
-
-    public void markFullRenderUpdate() {
-        this.needFullRenderUpdate = true;
-        updateRender();
-    }
 
     public boolean needFullUpdate = false;
 
@@ -98,7 +82,7 @@ public class TileEntityLittleTiles extends TileEntity {
     }
 
     public void updateNeighbor() {
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) markFullRenderUpdate();
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) updateRender();
         for (LittleTile tile : tiles) {
             tile.onNeighborChangeInside();
         }
@@ -178,7 +162,6 @@ public class TileEntityLittleTiles extends TileEntity {
             if (tile != null) tiles.add(tile);
         }
         updateTiles();
-        // update();
     }
 
     @Override
@@ -195,26 +178,17 @@ public class TileEntityLittleTiles extends TileEntity {
     @Override
     public Packet getDescriptionPacket() {
         NBTTagCompound nbt = new NBTTagCompound();
-        // writeToNBT(nbt);
         for (int i = 0; i < tiles.size(); i++) {
             NBTTagCompound tileNBT = new NBTTagCompound();
             NBTTagCompound packet = new NBTTagCompound();
             tiles.get(i).saveTile(tileNBT);
             tiles.get(i).updatePacket(packet);
-            // tileNBT.setByte("x", tiles.get(i).cornerVec.x);
-            // tileNBT.setByte("y", tiles.get(i).cornerVec.y);
-            // tileNBT.setByte("z", tiles.get(i).cornerVec.z);
             tileNBT.setTag("update", packet);
             nbt.setTag("t" + i, tileNBT);
             if (needFullUpdate) nbt.setBoolean("f" + i, true);
         }
         nbt.setInteger("tilesCount", tiles.size());
         needFullUpdate = false;
-        // if(needFullUpdate)
-        // {
-        // nbt.setBoolean("fullUpdate", true);
-        // needFullUpdate = false;
-        // }
         return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, blockMetadata, nbt);
     }
 
@@ -232,13 +206,6 @@ public class TileEntityLittleTiles extends TileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
-        /*
-         * if(pkt.func_148857_g().getBoolean("fullUpdate")) { tiles = new ArrayList<LittleTile>(); int count =
-         * pkt.func_148857_g().getInteger("tilesCount"); for (int i = 0; i < count; i++) { NBTTagCompound tileNBT = new
-         * NBTTagCompound(); tileNBT = pkt.func_148857_g().getCompoundTag("t" + i); LittleTile tile =
-         * LittleTile.CreateandLoadTile(worldObj, tileNBT); if(tile != null) tiles.add(tile); } }else{
-         */
-
         ArrayList<LittleTile> exstingTiles = new ArrayList<>(tiles);
         int count = pkt.func_148857_g().getInteger("tilesCount");
         for (int i = 0; i < count; i++) {
@@ -251,22 +218,12 @@ public class TileEntityLittleTiles extends TileEntity {
             } else {
                 tile = LittleTile.CreateandLoadTile(this, worldObj, tileNBT);
                 if (tile != null) tiles.add(tile);
-                // else
-                // System.out.println("Failed to load tileentity nbt=" + tileNBT.toString());
             }
         }
         for (LittleTile exstingTile : exstingTiles) {
             tiles.remove(exstingTile);
         }
-        // }
         updateTiles();
-        // markFullRenderUpdate();
-        /*
-         * if(tiles.size() == 0) { System.out.println("===============================");
-         * System.out.println("Receiving littleTiles packet x=" + xCoord + ",y=" + yCoord + ",z" + zCoord);
-         * System.out.println(pkt.func_148857_g().toString()); System.out.println("-------------------------------");
-         * System.out.println("Loaded " + tiles.size() + " tiles"); }
-         */
     }
 
     public MovingObjectPosition getMoving(EntityPlayer player) {
@@ -329,7 +286,7 @@ public class TileEntityLittleTiles extends TileEntity {
     }
 
     public void update() {
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) markFullRenderUpdate();
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) updateRender();
 
         worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, this);
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -342,14 +299,6 @@ public class TileEntityLittleTiles extends TileEntity {
 
     @Override
     public void updateEntity() {
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
-            if (needsRenderingUpdate) {
-                updateRender();
-                // System.out.println("Chunk update!");
-                needsRenderingUpdate = false;
-            }
-        }
-
         for (LittleTile tile : tiles) {
             tile.updateEntity();
         }
@@ -361,7 +310,6 @@ public class TileEntityLittleTiles extends TileEntity {
     }
 
     public void combineTiles(LittleStructure structure) {
-        // ArrayList<LittleTile> newTiles = new ArrayList<>();
         int size = 0;
         while (size != tiles.size()) {
             size = tiles.size();
@@ -404,7 +352,6 @@ public class TileEntityLittleTiles extends TileEntity {
     }
 
     public void combineTiles() {
-        // ArrayList<LittleTile> newTiles = new ArrayList<>();
         int size = 0;
         while (size != tiles.size()) {
             size = tiles.size();
